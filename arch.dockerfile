@@ -2,8 +2,9 @@
 # ║                       SETUP                         ║
 # ╚═════════════════════════════════════════════════════╝
 # GLOBAL
-  ARG APP_UID=1000 \
-      APP_GID=1000 \
+  ARG APP_UID= \
+      APP_GID= \
+      APP_GO_VERSION=0 \
       BUILD_ROOT=/go/rclone \
       BUILD_SRC=rclone/rclone.git
 
@@ -15,7 +16,7 @@
 # ║                       BUILD                         ║
 # ╚═════════════════════════════════════════════════════╝
 # :: ENTRYPOINT
-  FROM 11notes/go:1.25 AS entrypoint
+  FROM 11notes/go:${APP_GO_VERSION} AS entrypoint
   COPY ./build /
 
   RUN set -ex; \
@@ -25,7 +26,7 @@
 
 
 # :: RCLONE
-  FROM 11notes/go:1.25 AS build
+  FROM 11notes/go:${APP_GO_VERSION} AS build
   ARG APP_VERSION \
       BUILD_ROOT \
       BUILD_SRC \
