@@ -52,6 +52,38 @@ x-readonly: &readonly
   read_only: true
 
 services:
+  rclone:
+    depends_on:
+      mc:
+        condition: service_completed_successfully
+    image: "11notes/rclone:1.73.3"
+    <<: *readonly
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse:/dev/fuse
+    command: "mount 11notes:rclone/ /rclone/mnt --allow-other --vfs-cache-mode writes --cache-dir /rclone/cache --no-modtime --allow-non-empty --vfs-read-chunk-streams 16 --vfs-read-chunk-size 4M --no-check-certificate"
+    environment:
+      TZ: "Europe/Zurich"
+      RCLONE_CONFIG: |-
+        [11notes]
+        type = s3
+        provider = Minio
+        env_auth = false
+        access_key_id = admin
+        secret_access_key = ${MINIO_ROOT_PASSWORD}
+        region =
+        endpoint = https://minio:9000
+        location_constraint =
+        server_side_encryption =
+    volumes:
+      - "rclone.etc:/rclone/etc"
+      - "${PWD}/mnt:/rclone/mnt:rshared"
+      - "rclone.cache:/rclone/cache"
+    networks:
+      backend:
+    restart: "always"
+
   minio:
     # for more information about this image checkout:
     # https://github.com/11notes/docker-minio
@@ -88,38 +120,6 @@ services:
     networks:
       backend:
     restart: "no"
-
-  rclone:
-    depends_on:
-      mc:
-        condition: service_completed_successfully
-    image: "11notes/rclone:1.73.3"
-    <<: *readonly
-    cap_add:
-      - SYS_ADMIN
-    devices:
-      - /dev/fuse:/dev/fuse
-    command: "mount 11notes:rclone/ /rclone/mnt --allow-other --vfs-cache-mode writes --cache-dir /rclone/cache --no-modtime --allow-non-empty --vfs-read-chunk-streams 16 --vfs-read-chunk-size 4M --no-check-certificate"
-    environment:
-      TZ: "Europe/Zurich"
-      RCLONE_CONFIG: |-
-        [11notes]
-        type = s3
-        provider = Minio
-        env_auth = false
-        access_key_id = admin
-        secret_access_key = ${MINIO_ROOT_PASSWORD}
-        region =
-        endpoint = https://minio:9000
-        location_constraint =
-        server_side_encryption =
-    volumes:
-      - "rclone.etc:/rclone/etc"
-      - "${PWD}/mnt:/rclone/mnt:rshared"
-      - "rclone.cache:/rclone/cache"
-    networks:
-      backend:
-    restart: "always"
 
   prometheus:
     # for more information about this image checkout:
@@ -226,4 +226,4 @@ This image supports nobody by default. Simply add **-nobody** to any tag and the
 # ElevenNotes™️
 This image is provided to you at your own risk. Always make backups before updating an image to a different version. Check the [releases](https://github.com/11notes/docker-rclone/releases) for breaking changes. If you have any problems with using this image simply raise an [issue](https://github.com/11notes/docker-rclone/issues), thanks. If you have a question or inputs please create a new [discussion](https://github.com/11notes/docker-rclone/discussions) instead of an issue. You can find all my other repositories on [github](https://github.com/11notes?tab=repositories).
 
-*created 24.03.2026, 06:57:54 (CET)*
+*created 30.03.2026, 15:32:46 (CET)*
