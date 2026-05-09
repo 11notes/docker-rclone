@@ -3,7 +3,7 @@
   "name": "rclone",
   "root": "/rclone",
   "semver": {
-    "version": "1.74.0"
+    "version": "1.74.1"
   },
   "readme": {
     "description": "run rclone rootless.",
