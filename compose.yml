@@ -16,7 +16,7 @@ services:
     depends_on:
       mc:
         condition: service_completed_successfully
-    image: "11notes/rclone:1.74.2"
+    image: "11notes/rclone:1.74.3"
     <<: *readonly
     cap_add:
       - SYS_ADMIN
